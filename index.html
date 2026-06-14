@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>FIFA Calendar Tool</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body {
+  background: #f5f7fb;
+}
+.card {
+  margin-top: 20px;
+}
+.match {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 防止長文字爆版 */
+.name {
+  white-space: nowrap;
+}
+.cb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cb input {
+  margin: 0;
+}
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px 12px;
+}
+
+/* label 排版保持乾淨 */
+.team-grid .cb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+/* 📱 手機：3格 */
+@media (max-width: 768px) {
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 📱 很小螢幕：2格 */
+@media (max-width: 420px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* 手機 */
+@media (max-width: 768px) {
+  .name {
+    display: none;
+  }
+}
+
+/* 桌機 */
+@media (min-width: 769px) {
+  .flag {
+    display: none;
+  }
+}
+.mobile-text {
+  display: none;
+}
+
+.desktop-text {
+  display: inline;
+}
+
+/* 📱 手機 */
+@media (max-width: 768px) {
+  .mobile-text {
+    display: inline;
+  }
+
+  .desktop-text {
+    display: none;
+  }
+}
+</style>
+</head>
+
+<body class="container py-4">
+
+<h2 class="mb-4">⚽ FIFA 行事曆工具</h2>
+
+<div class="container py-4">
+
+  <h2>⚽ FIFA 賽程篩選</h2>
+
+  <div class="card p-3 mb-3">
+  <h5>① 賽事階段</h5>
+
+  <!-- Group Stage -->
+  <div>
+    <input type="checkbox" data-stage value="group" id="stage-group">
+    <label for="stage-group"><b>小組賽</b></label>
+
+    <!-- 🔽 nested groups -->
+    <div style="margin-left:20px; margin-top:8px;">
+    
+    <!-- A -->
+    <label>
+    <input type="checkbox" data-group value="A">
+    <span class="mobile-text">Group A 🇲🇽🇿🇦🇰🇷🇨🇿</span>
+    <span class="desktop-text">Group A Mexico, South Africa, South Korea, Czech Republic</span>
+    </label><br>
+
+    <!-- B -->
+    <label>
+    <input type="checkbox" data-group value="B">
+    <span class="mobile-text">Group B 🇨🇦🇧🇦🇶🇦🇨🇭</span>
+    <span class="desktop-text">Group B Canada, Bosnia and Herzegovina, Qatar, Switzerland</span>
+    </label><br>
+
+    <!-- C -->
+    <label>
+    <input type="checkbox" data-group value="C">
+    <span class="mobile-text">Group C 🇧🇷🇲🇦🇭🇹🇬🇧</span>
+    <span class="desktop-text">Group C Brazil, Morocco, Haiti, Scotland</span>
+    </label><br>
+
+    <!-- D -->
+    <label>
+    <input type="checkbox" data-group value="D">
+    <span class="mobile-text">Group D 🇺🇸🇵🇾🇦🇺🇹🇷</span>
+    <span class="desktop-text">Group D United States, Paraguay, Australia, Turkey</span>
+    </label><br>
+
+    <!-- E -->
+    <label>
+    <input type="checkbox" data-group value="E">
+    <span class="mobile-text">Group E 🇩🇪🇨🇼🇨🇮🇪🇨</span>
+    <span class="desktop-text">Group E Germany, Curaçao, Ivory Coast, Ecuador</span>
+    </label><br>
+
+    <!-- F -->
+    <label>
+    <input type="checkbox" data-group value="F">
+    <span class="mobile-text">Group F 🇳🇱🇯🇵🇸🇪🇹🇳</span>
+    <span class="desktop-text">Group F Netherlands, Japan, Sweden, Tunisia</span>
+    </label><br>
+
+    <!-- G -->
+    <label>
+    <input type="checkbox" data-group value="G">
+    <span class="mobile-text">Group G 🇧🇪🇪🇬🇮🇷🇳🇿</span>
+    <span class="desktop-text">Group G Belgium, Egypt, Iran, New Zealand</span>
+    </label><br>
+
+    <!-- H -->
+    <label>
+    <input type="checkbox" data-group value="H">
+    <span class="mobile-text">Group H 🇪🇸🇨🇻🇸🇦🇺🇾</span>
+    <span class="desktop-text">Group H Spain, Cape Verde, Saudi Arabia, Uruguay</span>
+    </label><br>
+
+    <!-- I -->
+    <label>
+    <input type="checkbox" data-group value="I">
+    <span class="mobile-text">Group I 🇫🇷🇸🇳🇮🇶🇳🇴</span>
+    <span class="desktop-text">Group I France, Senegal, Iraq, Norway</span>
+    </label><br>
+
+    <!-- J -->
+    <label>
+    <input type="checkbox" data-group value="J">
+    <span class="mobile-text">Group J 🇦🇷🇩🇿🇦🇹🇯🇴</span>
+    <span class="desktop-text">Group J Argentina, Algeria, Austria, Jordan</span>
+    </label><br>
+
+    <!-- K -->
+    <label>
+    <input type="checkbox" data-group value="K">
+    <span class="mobile-text">Group K 🇵🇹🇨🇩🇺🇿🇨🇴</span>
+    <span class="desktop-text">Group K Portugal, DR Congo, Uzbekistan, Colombia</span>
+    </label><br>
+
+    <!-- L -->
+    <label>
+    <input type="checkbox" data-group value="L">
+    <span class="mobile-text">Group L 🇬🇧🇭🇷🇬🇭🇵🇦</span>
+    <span class="desktop-text">Group L England, Croatia, Ghana, Panama</span>
+    </label>
+    </div>
+  </div>
+
+  <hr>
+  <!-- Knockout stages -->
+   <!-- <input type="checkbox" data-stage value="group" id="stage-group">
+    <label for="stage-group"><b>小組賽</b></label> -->
+ 
+    <label class="cb">
+    <input type="checkbox" data-stage value="round32">
+    <span class="stage-text"><b>32強</b></span>
+    </label>
+
+    <label class="cb">
+    <input type="checkbox" data-stage value="round16">
+    <span class="stage-text"><b>16強</b></span>
+    </label>
+
+    <label class="cb">
+    <input type="checkbox" data-stage value="quarter">
+    <span class="stage-text"><b>8強</b></span>
+    </label>
+
+    <label class="cb">
+    <input type="checkbox" data-stage value="semi">
+    <span class="stage-text"><b>準決賽</b></span>
+    </label>
+
+    <label class="cb">
+    <input type="checkbox" data-stage value="final">
+    <span class="stage-text"><b>決賽</b></span>
+    </label>
+
+</div>
+
+
+  <!-- 🟩 Team -->
+  <div class="card p-3 mb-3">
+    <h5>③ 隊伍</h5>
+    <div class="team-grid">
+        <!-- A -->
+        <label class="cb">
+        <input type="checkbox" data-team value="Mexico">
+        <span class="mobile-text">🇲🇽</span>
+        <span class="desktop-text">Mexico</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="South Africa">
+        <span class="mobile-text">🇿🇦</span>
+        <span class="desktop-text">South Africa</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="South Korea">
+        <span class="mobile-text">🇰🇷</span>
+        <span class="desktop-text">South Korea</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Czechia">
+        <span class="mobile-text">🇨🇿</span>
+        <span class="desktop-text">Czechia</span>
+        </label><br>
+
+        <!-- B -->
+        <label class="cb">
+        <input type="checkbox" data-team value="Canada">
+        <span class="mobile-text">🇨🇦</span>
+        <span class="desktop-text">Canada</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Bosnia and Herzegovina">
+        <span class="mobile-text">🇧🇦</span>
+        <span class="desktop-text">Bosnia and Herzegovina</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Qatar">
+        <span class="mobile-text">🇶🇦</span>
+        <span class="desktop-text">Qatar</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Switzerland">
+        <span class="mobile-text">🇨🇭</span>
+        <span class="desktop-text">Switzerland</span>
+        </label><br>
+
+        <!-- C -->
+        <label class="cb">
+        <input type="checkbox" data-team value="Brazil">
+        <span class="mobile-text">🇧🇷</span>
+        <span class="desktop-text">Brazil</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Morocco">
+        <span class="mobile-text">🇲🇦</span>
+        <span class="desktop-text">Morocco</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Haiti">
+        <span class="mobile-text">🇭🇹</span>
+        <span class="desktop-text">Haiti</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Scotland">
+        <span class="mobile-text">🇬🇧</span>
+        <span class="desktop-text">Scotland</span>
+        </label><br>
+
+        <!-- D -->
+        <label class="cb">
+        <input type="checkbox" data-team value="United States">
+        <span class="mobile-text">🇺🇸</span>
+        <span class="desktop-text">United States</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Paraguay">
+        <span class="mobile-text">🇵🇾</span>
+        <span class="desktop-text">Paraguay</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Australia">
+        <span class="mobile-text">🇦🇺</span>
+        <span class="desktop-text">Australia</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Turkey">
+        <span class="mobile-text">🇹🇷</span>
+        <span class="desktop-text">Turkey</span>
+        </label><br>
+
+        <!-- E -->
+        <label class="cb">
+        <input type="checkbox" data-team value="Germany">
+        <span class="mobile-text">🇩🇪</span>
+        <span class="desktop-text">Germany</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Curacao">
+        <span class="mobile-text">🇨🇼</span>
+        <span class="desktop-text">Curacao</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Ivory Coast">
+        <span class="mobile-text">🇨🇮</span>
+        <span class="desktop-text">Ivory Coast</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Ecuador">
+        <span class="mobile-text">🇪🇨</span>
+        <span class="desktop-text">Ecuador</span>
+        </label><br>
+
+        <!-- F -->
+        <label class="cb">
+        <input type="checkbox" data-team value="Netherlands">
+        <span class="mobile-text">🇳🇱</span>
+        <span class="desktop-text">Netherlands</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Japan">
+        <span class="mobile-text">🇯🇵</span>
+        <span class="desktop-text">Japan</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Sweden">
+        <span class="mobile-text">🇸🇪</span>
+        <span class="desktop-text">Sweden</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Tunisia">
+        <span class="mobile-text">🇹🇳</span>
+        <span class="desktop-text">Tunisia</span>
+        </label><br>
+
+        <!-- G -->
+        <label class="cb">
+        <input type="checkbox" data-team value="Belgium">
+        <span class="mobile-text">🇧🇪</span>
+        <span class="desktop-text">Belgium</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Egypt">
+        <span class="mobile-text">🇪🇬</span>
+        <span class="desktop-text">Egypt</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Iran">
+        <span class="mobile-text">🇮🇷</span>
+        <span class="desktop-text">Iran</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="New Zealand">
+        <span class="mobile-text">🇳🇿</span>
+        <span class="desktop-text">New Zealand</span>
+        </label><br>
+
+        <!-- H -->
+        <label class="cb">
+        <input type="checkbox" data-team value="Spain">
+        <span class="mobile-text">🇪🇸</span>
+        <span class="desktop-text">Spain</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Cape Verde">
+        <span class="mobile-text">🇨🇻</span>
+        <span class="desktop-text">Cape Verde</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Saudi Arabia">
+        <span class="mobile-text">🇸🇦</span>
+        <span class="desktop-text">Saudi Arabia</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Uruguay">
+        <span class="mobile-text">🇺🇾</span>
+        <span class="desktop-text">Uruguay</span>
+        </label><br>
+
+        <!-- I -->
+        <label class="cb">
+        <input type="checkbox" data-team value="France">
+        <span class="mobile-text">🇫🇷</span>
+        <span class="desktop-text">France</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Senegal">
+        <span class="mobile-text">🇸🇳</span>
+        <span class="desktop-text">Senegal</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Iraq">
+        <span class="mobile-text">🇮🇶</span>
+        <span class="desktop-text">Iraq</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Norway">
+        <span class="mobile-text">🇳🇴</span>
+        <span class="desktop-text">Norway</span>
+        </label><br>
+
+        <!-- J -->
+        <label class="cb">
+        <input type="checkbox" data-team value="Argentina">
+        <span class="mobile-text">🇦🇷</span>
+        <span class="desktop-text">Argentina</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Algeria">
+        <span class="mobile-text">🇩🇿</span>
+        <span class="desktop-text">Algeria</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Austria">
+        <span class="mobile-text">🇦🇹</span>
+        <span class="desktop-text">Austria</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Jordan">
+        <span class="mobile-text">🇯🇴</span>
+        <span class="desktop-text">Jordan</span>
+        </label><br>
+
+        <!-- K -->
+        <label class="cb">
+        <input type="checkbox" data-team value="Portugal">
+        <span class="mobile-text">🇵🇹</span>
+        <span class="desktop-text">Portugal</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="DR Congo">
+        <span class="mobile-text">🇨🇩</span>
+        <span class="desktop-text">DR Congo</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Uzbekistan">
+        <span class="mobile-text">🇺🇿</span>
+        <span class="desktop-text">Uzbekistan</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Colombia">
+        <span class="mobile-text">🇨🇴</span>
+        <span class="desktop-text">Colombia</span>
+        </label><br>
+
+        <!-- L -->
+        <label class="cb">
+        <input type="checkbox" data-team value="England">
+        <span class="mobile-text">🇬🇧</span>
+        <span class="desktop-text">England</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Croatia">
+        <span class="mobile-text">🇭🇷</span>
+        <span class="desktop-text">Croatia</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Ghana">
+        <span class="mobile-text">🇬🇭</span>
+        <span class="desktop-text">Ghana</span>
+        </label><br>
+
+        <label class="cb">
+        <input type="checkbox" data-team value="Panama">
+        <span class="mobile-text">🇵🇦</span>
+        <span class="desktop-text">Panama</span>
+        </label><br>
+    </div>
+  </div>
+
+
+  <!-- 🌍 Timezone -->
+  <!-- <div class="card p-3 mb-3">
+    <h5>🌍時區</h5>
+
+    <select id="timezone" class="form-select">
+      <option value="Europe/Berlin">Berlin</option>
+      <option value="Asia/Taipei">Taipei</option>
+      <option value="UTC">UTC</option>
+    </select>
+  </div> -->
+
+
+  <!-- 📅 Action -->
+  <div class="card p-3">
+    <button class="btn btn-primary w-100" onclick="generate()">
+      📅生成 ICS
+    </button>
+  </div>
+
+</div>
+
+<script>
+//Get from Google Script
+const API_URL = "https://script.google.com/macros/s/AKfycbziXwO_iGpSmPJY-IVokBYCF6mCU56NvXLMqs79ynYAdwfmm5LJImQW7_zDTxOT5-YSeg/exec";
+
+let matches = [];
+
+// =========================
+// 📥 Load data
+// =========================
+async function loadData() {
+  try {
+    const res = await fetch(API_URL + "?t=" + Date.now(), {
+        cache: "no-store"
+    });
+
+    const text = await res.text();
+
+    matches = JSON.parse(text);
+    console.log("✅ Loaded matches:", matches);
+
+  } catch (err) {
+    console.error("❌ Fetch error:", err);
+  }
+}
+
+loadData();
+
+// =========================
+// 🎯 Get selections
+// =========================
+function toICS(isoString) {
+  return new Date(isoString)
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .split(".")[0] + "Z";
+}
+function renderTeam(name) {
+  const FLAG_MAP={"墨西哥":"🇲🇽","南非":"🇿🇦","南韓":"🇰🇷","捷克":"🇨🇿","加拿大":"🇨🇦","波士尼亞":"🇧🇦","卡達":"🇶🇦","瑞士":"🇨🇭","巴西":"🇧🇷","摩洛哥":"🇲🇦","海地":"🇭🇹","蘇格蘭":"🇬🇧","美國":"🇺🇸","巴拉圭":"🇵🇾","澳洲":"🇦🇺","土耳其":"🇹🇷","德國":"🇩🇪","庫拉索":"🇨🇼","古拉索":"🇨🇼","象牙海岸":"🇨🇮","厄瓜多":"🇪🇨","荷蘭":"🇳🇱","日本":"🇯🇵","瑞典":"🇸🇪","突尼西亞":"🇹🇳","比利時":"🇧🇪","埃及":"🇪🇬","伊朗":"🇮🇷","紐西蘭":"🇳🇿","西班牙":"🇪🇸","維德角":"🇨🇻","沙烏地阿拉伯":"🇸🇦","烏拉圭":"🇺🇾","法國":"🇫🇷","塞內加爾":"🇸🇳","伊拉克":"🇮🇶","挪威":"🇳🇴","阿根廷":"🇦🇷","阿爾及利亞":"🇩🇿","奧地利":"🇦🇹","約旦":"🇯🇴","葡萄牙":"🇵🇹","剛果民主共和國":"🇨🇩","烏茲別克":"🇺🇿","哥倫比亞":"🇨🇴","英格蘭":"🇬🇧","克羅埃西亞":"🇭🇷","迦納":"🇬🇭","巴拿馬":"🇵🇦"};
+
+  const isMobile = window.innerWidth <= 768;
+
+  if (isMobile) {
+    return `<span class="flag">${flagMap[name] || "🏳️"}</span>`;
+  } else {
+    return `<span class="name">${name}</span>`;
+  }
+}
+// stage (group / knockout stages)
+function getSelectedStages() {
+  return [...document.querySelectorAll("input[data-stage]:checked")]
+    .map(el => el.value);
+}
+
+// group (A-H)
+function getSelectedGroups() {
+  return [...document.querySelectorAll("input[data-group]:checked")]
+    .map(el => el.value);
+}
+
+// team
+function getSelectedTeams() {
+  return [...document.querySelectorAll("input[data-team]:checked")]
+    .map(el => el.value);
+}
+
+// =========================
+// 🔗 UI logic (group auto toggle)
+// =========================
+const stageGroup = document.getElementById("stage-group");
+const groupBoxes = document.querySelectorAll("input[data-group]");
+
+if (stageGroup) {
+  stageGroup.addEventListener("change", (e) => {
+    const enabled = e.target.checked;
+
+    groupBoxes.forEach(cb => {
+      cb.disabled = !enabled;
+      if (!enabled) cb.checked = false;
+    });
+  });
+}
+
+function generate() {
+  const stages = getSelectedStages();
+  const groups = getSelectedGroups();
+  const teams = getSelectedTeams();
+
+  const resultMap = new Map();
+
+  // =========================
+  // 🟡 1. Stage filter (UNION)
+  // =========================
+  if (stages.length > 0) {
+    matches
+      .filter(m => stages.includes(m.stage))
+      .forEach(m => resultMap.set(m.id, m));
+  }
+
+  // =========================
+  // 🟢 2. Group filter (UNION)
+  // =========================
+  if (groups.length > 0) {
+    matches
+      .filter(m =>
+        m.stage === "group" &&
+        groups.includes(m.group)
+      )
+      .forEach(m => resultMap.set(m.id, m));
+  }
+
+  // =========================
+  // 🔵 3. Team filter (UNION)
+  // =========================
+  if (teams.length > 0) {
+    matches
+      .filter(m =>
+        teams.includes(m.home) ||
+        teams.includes(m.away)
+      )
+      .forEach(m => resultMap.set(m.id, m));
+  }
+
+  // =========================
+  // 🎯 FINAL UNION RESULT
+  // =========================
+  const filtered = Array.from(resultMap.values());
+
+  console.log("🎯 Final matches:", filtered);
+
+  // =========================
+  // 📅 Build ICS
+  // =========================
+  let ics = "BEGIN:VCALENDAR\nVERSION:2.0\n";
+filtered.forEach(m => {
+
+  const dtStart = toICS(m.start);
+  const dtEnd = toICS(new Date(new Date(m.start).getTime() + 120 * 60 * 1000));
+
+
+  ics += `BEGIN:VEVENT
+UID:${m.id}
+DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").split(".")[0]}Z
+SUMMARY:[${m.stage}] ${m.home} vs ${m.away}
+DTSTART:${dtStart}
+DTEND:${dtEnd}
+END:VEVENT
+`;
+});
+
+//   filtered.forEach(m => {
+//     const dt = m.start.replace(/[-:]/g, "").replace(".000Z", "Z");
+
+//     ics += `BEGIN:VEVENT
+// SUMMARY:[${m.stage}] ${m.home} vs ${m.away}
+// DTSTART:${dt}
+// DTEND:${dt}
+// END:VEVENT
+// `;
+//   });
+
+  ics += "END:VCALENDAR";
+
+  // =========================
+  // 📥 Download
+  // =========================
+  const blob = new Blob([ics], { type: "text/calendar" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "fifa.ics";
+  a.click();
+}
+</script>
+
+</body>
+</html>

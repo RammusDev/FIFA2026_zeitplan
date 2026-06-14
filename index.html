@@ -723,13 +723,29 @@ function generate() {
   // =========================
   // 📥 Download
   // =========================
-  const blob = new Blob([ics], { type: "text/calendar" });
-  const url = URL.createObjectURL(blob);
+//   const blob = new Blob([ics], { type: "text/calendar" });
+//   const url = URL.createObjectURL(blob);
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "fifa.ics";
-  a.click();
+//   const a = document.createElement("a");
+//   a.href = url;
+//   a.download = "fifa.ics";
+//   a.click();
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "fifa.ics";
+
+    // 🔥 關鍵補強（讓 iOS 認為是 user gesture）
+    document.body.appendChild(a);
+    a.style.display = "none";
+    a.click();
+    a.remove();
+
+    setTimeout(() => {
+    URL.revokeObjectURL(url);
+    }, 1000);
 }
 </script>
 

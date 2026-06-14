@@ -702,11 +702,7 @@ function generate() {
   // =========================
   // 📅 Build ICS
   // =========================
-  let ics =
-"BEGIN:VCALENDAR\r\n" +
-"VERSION:2.0\r\n" +
-"CALSCALE:GREGORIAN\r\n" +
-"PRODID:-//FIFA//WorldCup//EN\r\n";
+  let ics = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\n";
 
   filtered.forEach(m => {
 
@@ -727,43 +723,13 @@ function generate() {
   // =========================
   // 📥 Download
   // =========================
-  downloadICS(ics)
-//   const blob = new Blob([ics], { type: "text/calendar" });
-//   const url = URL.createObjectURL(blob);
-
-//   const a = document.createElement("a");
-//   a.href = url;
-//   a.download = "fifa.ics";
-//   a.click();
-}
-// =========================
-// 📥 Download (Advanced Stable Version)
-// =========================
-
-function downloadICS(ics) {
-  if (!ics || typeof ics !== "string") return;
-
-  const blob = new Blob([ics], {
-    type: "application/octet-stream"
-  });
-
+  const blob = new Blob([ics], { type: "text/calendar" });
   const url = URL.createObjectURL(blob);
 
   const a = document.createElement("a");
   a.href = url;
   a.download = "fifa.ics";
-
-  // 🔥 避免 iOS Safari 不觸發 click
-  document.body.appendChild(a);
-  a.style.display = "none";
-
   a.click();
-
-  // cleanup
-  setTimeout(() => {
-    a.remove();
-    URL.revokeObjectURL(url);
-  }, 2000);
 }
 </script>
 

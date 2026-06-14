@@ -1,54 +1,125 @@
 export default {
   async fetch(req) {
     const url = new URL(req.url);
-    const team = url.searchParams.get("team");
 
-    const ics = generateICS(team);
+    // =========================
+    // 🎛 Query params
+    // =========================
+    const stages = url.searchParams.get("stage")?.split(",").filter(Boolean) || [];
+    const groups = url.searchParams.get("group")?.split(",").filter(Boolean) || [];
+    const teams = url.searchParams.get("team")?.split(",").filter(Boolean) || [];
 
+    // =========================
+    // 📡 Fetch from Google Apps Script
+    // =========================
+    const API_URL =
+      "https://script.google.com/macros/s/AKfycbwRUJ_Qe_gr2_ZP8IjpEBpfKBD9TXBVkubfBizmS2x-0ULMIfXqatIEtaOd8Hb0skgIcg/exec";
+
+    const res = await fetch(API_URL);
+
+    if (!res.ok) {
+      return new Response("Failed to fetch match data", { status: 500 });
+    }
+
+    const data = await res.json();
+    const matches = data || [];
+
+    // =========================
+    // 🎯 FILTER LOGIC (UNION)
+    // =========================
+    const resultMap = new Map();
+
+    // 🟡 Stage filter
+    if (stages.length > 0) {
+      matches
+        .filter(m => stages.includes(m.round))
+        .forEach(m => resultMap.set(m.id, m));
+    }
+
+    // 🟢 Group filter
+    if (groups.length > 0) {
+      matches
+        .filter(m => groups.includes(m.group))
+        .forEach(m => resultMap.set(m.id, m));
+    }
+
+    // 🔵 Team filter
+    if (teams.length > 0) {
+      matches
+        .filter(m =>
+          teams.includes(m.team1) ||
+          teams.includes(m.team2)
+        )
+        .forEach(m => resultMap.set(m.id, m));
+    }
+
+    // =========================
+    // 🎯 FINAL RESULT
+    // =========================
+    let filtered = Array.from(resultMap.values());
+
+    // 如果沒選任何 filter → 回全部
+    if (
+      stages.length === 0 &&
+      groups.length === 0 &&
+      teams.length === 0
+    ) {
+      filtered = matches;
+    }
+
+    // ⭐ sort by time
+    filtered.sort((a, b) => new Date(a.time) - new Date(b.time));
+
+    // =========================
+    // 📅 ICS GENERATION
+    // =========================
+    const now = formatICSDate(new Date());
+
+  // =========================
+  // 📅 Build ICS
+  // =========================
+  let ics = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\n";
+
+  filtered.forEach(m => {
+
+    const dtStart = toICS(m.time);
+    const dtEnd = toICS(new Date(new Date(m.time).getTime() + 120 * 60 * 1000));
+
+    ics += `BEGIN:VEVENT\r\n`;
+    ics += `UID:${m.id}\r\n`;
+    ics += `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").split(".")[0]}Z\r\n`;
+    ics += `SUMMARY:[${m.round}] ${m.team1} vs ${m.team2}\r\n`;
+    ics += `DTSTART:${dtStart}\r\n`;
+    ics += `DTEND:${dtEnd}\r\n`;
+    ics += `END:VEVENT\r\n`;
+  });
+
+  ics += "END:VCALENDAR";
+
+    // =========================
+    // 📤 RESPONSE
+    // =========================
     return new Response(ics, {
       headers: {
-        "Content-Type": "text/calendar; charset=utf-8"
+        "Content-Type": "text/calendar; charset=utf-8",
+        "Cache-Control": "public, max-age=300",
+        "Content-Disposition": 'attachment; filename="fifa.ics"'
       }
     });
   }
 };
 
-// ===== MOCK DATA（之後換成 worldcup.json）=====
-const matches = [
-  { uid: "1", home: "Spain", away: "Germany", time: "20260615T160000Z" },
-  { uid: "2", home: "Japan", away: "Spain", time: "20260620T160000Z" },
-  { uid: "3", home: "France", away: "Brazil", time: "20260625T160000Z" }
-];
-
-function generateICS(team) {
-  let filtered = matches;
-
-  if (team) {
-    filtered = matches.filter(m =>
-      m.home.toLowerCase() === team.toLowerCase() ||
-      m.away.toLowerCase() === team.toLowerCase()
-    );
-  }
-
-  let ics =
-`BEGIN:VCALENDAR
-VERSION:2.0
-CALSCALE:GREGORIAN
-PRODID:-//FIFA//WorldCup//EN
-`;
-
-  for (const m of filtered) {
-    ics +=
-`BEGIN:VEVENT
-UID:${m.uid}
-SUMMARY:${m.home} vs ${m.away}
-DTSTART:${m.time}
-DTEND:${m.time}
-END:VEVENT
-`;
-  }
-
-  ics += "END:VCALENDAR";
-
-  return ics;
+// =========================
+// 🧠 helpers
+// =========================
+function formatICSDate(date) {
+  return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
 }
+
+// function escapeICS(str = "") {
+//   return String(str)
+//     .replace(/\\/g, "\\\\")
+//     .replace(/,/g, "\\,")
+//     .replace(/;/g, "\\;")
+//     .replace(/\n/g, "\\n");
+// }

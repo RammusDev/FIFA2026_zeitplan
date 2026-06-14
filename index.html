@@ -702,7 +702,11 @@ function generate() {
   // =========================
   // 📅 Build ICS
   // =========================
-  let ics = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\n";
+  let ics =
+"BEGIN:VCALENDAR\r\n" +
+"VERSION:2.0\r\n" +
+"CALSCALE:GREGORIAN\r\n" +
+"PRODID:-//FIFA//WorldCup//EN\r\n";
 
   filtered.forEach(m => {
 

@@ -10,9 +10,13 @@
 body {
   background: #f5f7fb;
 }
+
+/* 卡片 */
 .card {
   margin-top: 20px;
 }
+
+/* match row */
 .match {
   display: flex;
   flex-wrap: wrap;
@@ -20,58 +24,36 @@ body {
   gap: 6px;
 }
 
-/* 防止長文字爆版 */
+/* 防止長文字 */
 .name {
   white-space: nowrap;
 }
+
+/* checkbox 基本樣式 */
 .cb {
   display: flex;
   align-items: center;
   gap: 6px;
 }
+
 .cb input {
   margin: 0;
 }
+
+/* =========================
+   TEAM GRID
+========================= */
+
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 8px 12px;
 }
 
-/* label 排版保持乾淨 */
-.team-grid .cb {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
+/* =========================
+   TEXT SWITCH
+========================= */
 
-/* 📱 手機：3格 */
-@media (max-width: 768px) {
-  .team-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* 📱 很小螢幕：2格 */
-@media (max-width: 420px) {
-  .team-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-/* 手機 */
-@media (max-width: 768px) {
-  .name {
-    display: none;
-  }
-}
-
-/* 桌機 */
-@media (min-width: 769px) {
-  .flag {
-    display: none;
-  }
-}
 .mobile-text {
   display: none;
 }
@@ -80,13 +62,42 @@ body {
   display: inline;
 }
 
-/* 📱 手機 */
+/* =========================
+   📱 TABLET / MOBILE
+========================= */
+
 @media (max-width: 768px) {
+
+  .team-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
   .mobile-text {
     display: inline;
   }
 
   .desktop-text {
+    display: none;
+  }
+
+  .name {
+    display: none;
+  }
+}
+
+/* 📱 very small */
+@media (max-width: 420px) {
+  .team-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* =========================
+   DESKTOP ONLY ICON OPTION
+========================= */
+
+@media (min-width: 769px) {
+  .flag {
     display: none;
   }
 }

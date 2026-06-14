@@ -70,11 +70,6 @@ export default {
     // ⭐ sort by time
     filtered.sort((a, b) => new Date(a.time) - new Date(b.time));
 
-    // =========================
-    // 📅 ICS GENERATION
-    // =========================
-    const now = formatICSDate(new Date());
-
   // =========================
   // 📅 Build ICS
   // =========================

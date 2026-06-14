@@ -723,13 +723,74 @@ function generate() {
   // =========================
   // 📥 Download
   // =========================
-  const blob = new Blob([ics], { type: "text/calendar" });
-  const url = URL.createObjectURL(blob);
+  downloadICS(ics)
+//   const blob = new Blob([ics], { type: "text/calendar" });
+//   const url = URL.createObjectURL(blob);
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "fifa.ics";
-  a.click();
+//   const a = document.createElement("a");
+//   a.href = url;
+//   a.download = "fifa.ics";
+//   a.click();
+}
+// =========================
+// 📥 Download (Advanced Stable Version)
+// =========================
+
+function downloadICS(ics) {
+  try {
+    // 🔥 基本防呆
+    if (!ics || typeof ics !== "string" || ics.length === 0) {
+      console.error("ICS is empty or invalid");
+      return;
+    }
+
+    // 🔥 建立 Blob（utf-8 避免 emoji / timezone 問題）
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "fifa.ics";
+
+    // 🔥 iOS Safari 必須：掛進 DOM
+    document.body.appendChild(a);
+    a.style.display = "none";
+
+    // 🔥 關鍵：確保在 user gesture 同步執行
+    requestAnimationFrame(() => {
+      a.click();
+
+      // fallback（極少數 Safari click fail）
+      setTimeout(() => {
+        if (!document.hidden) {
+          window.location.href = url;
+        }
+      }, 300);
+    });
+
+    // 🧹 cleanup DOM
+    setTimeout(() => {
+      if (a.parentNode) a.remove();
+    }, 1000);
+
+    // 🧹 延遲釋放 Blob URL（iOS 必須）
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 5000);
+
+  } catch (err) {
+    console.error("Download failed:", err);
+
+    // 🔥 最後 fallback（保底方案）
+    try {
+      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      window.location.href = url;
+    } catch (e) {
+      console.error("Fallback failed:", e);
+    }
+  }
 }
 </script>
 

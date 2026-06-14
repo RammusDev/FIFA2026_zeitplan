@@ -83,7 +83,7 @@ export default {
     ics += `BEGIN:VEVENT\r\n`;
     ics += `UID:${m.id}\r\n`;
     ics += `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").split(".")[0]}Z\r\n`;
-    ics += `SUMMARY:[${m.round}] ${m.team1} vs ${m.team2}\r\n`;
+    ics += `SUMMARY:[FIFA2026]${m.round} ${m.team1} vs ${m.team2}\r\n`;
     ics += `DTSTART:${dtStart}\r\n`;
     ics += `DTEND:${dtEnd}\r\n`;
     ics += `END:VEVENT\r\n`;

@@ -660,7 +660,7 @@ function generate() {
   const resultMap = new Map();
 
   // =========================
-  // 🟡 1. Stage filter (UNION)
+  // 🟡 Stage filter (UNION)
   // =========================
   if (stages.length > 0) {
     matches
@@ -669,7 +669,7 @@ function generate() {
   }
 
   // =========================
-  // 🟢 2. Group filter (UNION)
+  // 🟢 Group filter (UNION)
   // =========================
   if (groups.length > 0) {
     matches
@@ -678,7 +678,7 @@ function generate() {
   }
 
   // =========================
-  // 🔵 3. Team filter (UNION)
+  // 🔵 Team filter (UNION)
   // =========================
   if (teams.length > 0) {
     matches
@@ -690,46 +690,40 @@ function generate() {
   }
 
   // =========================
-  // 🎯 FINAL UNION RESULT
+  // 🎯 FINAL RESULT
   // =========================
   let filtered = Array.from(resultMap.values());
 
-  // ⭐ 4. SORT by time (IMPORTANT)
+  // 如果沒選任何條件 → 全部
+  if (stages.length === 0 && groups.length === 0 && teams.length === 0) {
+    filtered = matches;
+  }
+
+  // ⭐ sort
   filtered.sort((a, b) => new Date(a.time) - new Date(b.time));
 
   console.log("🎯 Final matches:", filtered);
 
   // =========================
-  // 📅 Build ICS
+  // 📡 BUILD SUBSCRIPTION URL
   // =========================
-  let ics = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\n";
+  const params = new URLSearchParams();
 
-  filtered.forEach(m => {
+  if (teams.length) params.set("team", teams.join(","));
+  if (groups.length) params.set("group", groups.join(","));
+  if (stages.length) params.set("stage", stages.join(","));
 
-    const dtStart = toICS(m.time);
-    const dtEnd = toICS(new Date(new Date(m.time).getTime() + 120 * 60 * 1000));
+  const baseUrl = "https://fifa2026zeitplan.rammus-shigoto.workers.dev/";
 
-    ics += `BEGIN:VEVENT\r\n`;
-    ics += `UID:${m.id}\r\n`;
-    ics += `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").split(".")[0]}Z\r\n`;
-    ics += `SUMMARY:[${m.round}] ${m.team1} vs ${m.team2}\r\n`;
-    ics += `DTSTART:${dtStart}\r\n`;
-    ics += `DTEND:${dtEnd}\r\n`;
-    ics += `END:VEVENT\r\n`;
-  });
+  const webcalUrl =
+    `webcal://${baseUrl.replace("https://", "")}?${params.toString()}`;
 
-  ics += "END:VCALENDAR";
+  console.log("📡 Subscribe URL:", webcalUrl);
 
   // =========================
-  // 📥 Download
+  // 📱 iOS SUBSCRIBE
   // =========================
-  const blob = new Blob([ics], { type: "text/calendar" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "fifa.ics";
-  a.click();
+  window.location.href = webcalUrl;
 }
 </script>
 

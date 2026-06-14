@@ -112,10 +112,12 @@ export default {
 // =========================
 // 🧠 helpers
 // =========================
-function formatICSDate(date) {
-  return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+function toICS(isoString) {
+  return new Date(isoString)
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .split(".")[0] + "Z";
 }
-
 // function escapeICS(str = "") {
 //   return String(str)
 //     .replace(/\\/g, "\\\\")

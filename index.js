@@ -86,6 +86,7 @@ export default {
     ics += `SUMMARY:[FIFA2026]${m.round} ${m.team1} vs ${m.team2}\r\n`;
     ics += `DTSTART:${dtStart}\r\n`;
     ics += `DTEND:${dtEnd}\r\n`;
+    ics += `DESCRIPTION:${m.memo || ""}\r\n`;
     ics += `END:VEVENT\r\n`;
   });
 

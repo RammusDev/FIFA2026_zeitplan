@@ -1,0 +1,42 @@
+[
+  {
+    "id": "demo-1",
+    "round": "group",
+    "group": "E",
+    "team1": "Germany",
+    "team2": "Japan",
+    "time": "2026-06-15T18:00:00Z",
+    "demo": true,
+    "memo": "Fiktive Beispieldaten für die Portfolio-Demo. Keine offiziellen Spieltermine."
+  },
+  {
+    "id": "demo-2",
+    "round": "group",
+    "group": "F",
+    "team1": "Japan",
+    "team2": "Netherlands",
+    "time": "2026-06-20T16:00:00Z",
+    "demo": true,
+    "memo": "Fiktive Beispieldaten für die Portfolio-Demo. Keine offiziellen Spieltermine."
+  },
+  {
+    "id": "demo-3",
+    "round": "quarter",
+    "group": "",
+    "team1": "Germany",
+    "team2": "France",
+    "time": "2026-07-09T19:00:00Z",
+    "demo": true,
+    "memo": "Fiktive Beispieldaten für die Portfolio-Demo. Keine offiziellen Spieltermine."
+  },
+  {
+    "id": "demo-4",
+    "round": "final",
+    "group": "",
+    "team1": "Argentina",
+    "team2": "Spain",
+    "time": "2026-07-19T19:00:00Z",
+    "demo": true,
+    "memo": "Fiktive Beispieldaten für die Portfolio-Demo. Keine offiziellen Spieltermine."
+  }
+]

@@ -1,115 +1,59 @@
-# FIFA2026_zeitplan
+# Matchday · FIFA 2026 Calendar Tool
 
-依賽事階段、小組與球隊篩選 FIFA 2026 賽程，產生可供行事曆訂閱的 ICS feed。
+德文賽程工具：選擇球隊、小組與賽事階段，預覽自己的賽程並匯出 ICS 行事曆。
 
-包含德文網頁介面與 Cloudflare Worker；賽程由外部 Google Apps Script 提供。
+![桌面展示](docs/desktop.png)
 
-## 功能
+## 30 秒體驗
 
-- 按小組賽及各淘汰賽階段篩選。
-- 按 A–L 小組或個別球隊篩選。
-- 多項條件採聯集（OR），並依賽事 ID 去重。
-- 未選任何條件時，輸出全部賽事。
-- 依開賽時間排序，輸出 UTC 格式行事曆事件。
-- 每場事件暫設兩小時。
-- 網頁產生 `webcal://` 訂閱連結，Worker 提供 `text/calendar` 回應。
-
-## 使用方式
-
-1. 開啟網頁，選擇賽事階段、小組或球隊。
-2. 按「ICS generieren」。
-3. 在支援的行事曆 App 中確認訂閱。
-
-例如，同時選「決賽」與「Germany」，結果是決賽加上德國隊所有賽事，而不是只保留德國隊參加的決賽。
-
-`webcal://` 的開啟方式取決於作業系統及行事曆 App；也可使用相同參數的 HTTPS feed 網址。
-
-## 專案結構
-
-| 檔案 | 職責 |
-| --- | --- |
-| index.html | 德文操作介面、篩選選項與訂閱網址產生 |
-| index.js | Cloudflare Worker：讀取資料、篩選及輸出 ICS |
-| wrangler.jsonc | Worker 名稱、入口與相容性設定 |
-
-## 本機與部署設定
-
-### 網頁
-
-在根目錄使用靜態伺服器，例如：
+需要 Node.js 22 以上，無需安裝依賴。
 
 ```sh
-python -m http.server 8000
+npm start
 ```
 
-開啟 `http://localhost:8000`。
+開啟 http://localhost:8000，勾選 Germany 與 Finale，可看到聯集的三場示範比賽；按「ICS herunterladen」下載檔案並匯入行事曆。
 
-### Worker
+預設四場資料是**虛構展示資料**，不是官方賽事或真實對戰。介面、檔名與事件說明都標示 DEMO。示範模式可在 GitHub Pages 等靜態主機直接運作，不依賴 Apps Script 或 Worker。
 
-需先安裝 Node.js 與 npm。在專案根目錄啟動開發伺服器：
+## 功能與設計
+
+- 德文響應式介面、即時篩選預覽、Berlin／Taipei／UTC 顯示。
+- 階段、小組、球隊採 OR 聯集，無選項則顯示全部；小組選項獨立運作，不被「全部小組賽」覆蓋。
+- 網頁與 Worker 共用 `calendar.js` 的驗證、篩選及 ICS 產生邏輯。
+- ICS 使用 UTC、穩定 UID、CRLF、文字跳脫及依 UTF-8 位元組計算的 75 octet 長行折行。事件固定兩小時。
+- 外部資料失敗會顯示錯誤，Worker 回應 502；不會悄悄以示範資料替代真實賽程。
+- 下載是單次匯入；訂閱是透過 Worker 定期讀取，更新頻率由行事曆 App 決定。
+
+## 外部資料與訂閱
+
+`config.js` 集中管理既有 Apps Script 資料來源及 Worker feed。切換「Externe Spieldaten」才讀取外部資料，成功後提供 webcal 訂閱與 HTTPS feed 複製。**本次未部署新版 Worker**，發布前應同步部署前端與 Worker，並實測訂閱。
+
+每筆來源資料需包含：字串 id、round、team1、team2、帶時區的 time；group 與 memo 選填。id 必須唯一。round 可用 group、round32、round16、quarter、semi、third、final。資料來源負責賽事正確性，程式不推測官方對戰。
+
+部署 Worker（需自己的 Cloudflare 帳號與 Wrangler）：
 
 ```sh
 npx wrangler dev
-```
-
-部署至自己的 Cloudflare 帳號時使用 Wrangler 的登入及部署流程：
-
-```sh
-npx wrangler login
 npx wrangler deploy
 ```
 
-部署前需調整：
+可使用 Worker 環境變數 `DATA_URL` 覆寫來源。網頁需另外託管；將自己的部署 URL 更新到 config.js。Apps Script 來源處理程式不包含於 repository。
 
-- `wrangler.jsonc`：自己的 Worker 名稱及適用設定。
-- `index.js` 的 `API_URL`：自己的 Apps Script 資料來源。
-- `index.html` 的 `API_URL`：相同資料來源，供頁面讀取。
-- `index.html` 的 `baseUrl`：自己部署的 Worker HTTPS 網址。
+Feed 範例：`https://YOUR-WORKER.workers.dev/?team=Germany,Japan&stage=final`。
 
-網頁與 Worker 是分開的入口；目前 Wrangler 設定只指定 Worker 程式，未設定靜態 HTML 資產託管。網頁需另行部署至靜態網站服務。
+## 驗證
 
-## Feed 參數
-
-| 參數 | 範例 | 用途 |
-| --- | --- | --- |
-| stage | `group,final` | 賽事階段 |
-| group | `A,B` | 小組 |
-| team | `Germany,Japan` | 球隊 |
-
-HTTPS 請求範例：
-
-```text
-https://YOUR-WORKER.workers.dev/?team=Germany,Japan&stage=final
+```sh
+npm test
 ```
 
-階段值：`group`、`round32`、`round16`、`quarter`、`semi`、`third`、`final`。
+測試涵蓋 OR 篩選、全部／無結果、來源格式、重複 ID、ICS 跳脫／折行／UTC、Worker 正常與上游失敗。另以桌面與 390px 手機瀏覽器驗證預覽、下載及外部來源失敗後恢復示範模式。CI 使用 GitHub Actions。
 
-## 資料來源格式
+本次未驗證外部來源的真實賽程、Cloudflare 正式部署或各家行事曆訂閱行為。
 
-Google Apps Script 需回傳 JSON 陣列，每筆包含：
+## 作品集介紹
 
-| 欄位 | 用途 |
-| --- | --- |
-| id | 去重與行事曆 UID |
-| round | 與 stage 對應的階段值 |
-| group | 小組代號 |
-| team1 / team2 | 與選項完全一致的球隊名稱 |
-| time | 可由 JavaScript Date 解析、建議含時區的 ISO 時間 |
-| memo | 選填的事件說明 |
+> 實作德文賽程行事曆工具，以共用 JavaScript 模組連接前端預覽與 Cloudflare Worker，完成 OR 篩選、時區顯示及 ICS 相容性處理，並提供與外部服務隔離的示範資料及自動化測試。
 
-Apps Script 接收／資料處理程式不包含在 repo。頁面註記的原始資料來源為 [openfootball/worldcup.json](https://github.com/openfootball/worldcup.json)，程式實際透過 Apps Script 讀取，並非直接讀取該來源。
-
-## 目前限制
-
-- 依賴外部 Apps Script 的可用性與資料更新；repo 不保證賽程正確或即時。
-- 球隊名稱與階段值需與資料完全一致。
-- 行事曆重新抓取頻率由各 App 決定；Worker 回應設定五分鐘快取。
-- ICS 文字欄位尚未完整處理特殊字元跳脫與長行折行。
-- 此次文件整理未實際驗證外部 feed 或完整訂閱流程。
-
-## 後續整理方向
-
-- 補充介面截圖及行事曆訂閱畫面。
-- 加入資料載入失敗提示與輸入資料驗證。
-- 完善 ICS 相容性。
-- 將資料來源及部署網址集中管理。
+[手機版畫面](docs/mobile.png)

@@ -1,4 +1,21 @@
-# FIFA2026_zeitplan
+# FIFA 2026 Scheduler — Calendar Subscription Tool
+
+**AI-assisted personal project** · JavaScript · Cloudflare Workers · Google Apps Script · ICS
+
+[Live website](https://rammusdev.github.io/FIFA2026_zeitplan/)
+
+A web-based tool for filtering FIFA World Cup 2026 matches by tournament stage, group, and team, then generating a subscribable calendar feed. The interface is in German.
+
+**Highlights**
+- Combines multiple filter selections using OR logic, removes duplicate matches by ID, and sorts events chronologically.
+- Generates UTC-based ICS calendar events and `webcal://` subscription links through a Cloudflare Worker.
+- Reads match data from an external Google Apps Script service; the upstream data service is not included in this repository.
+
+**Development approach:** AI-assisted implementation, with requirements definition, integration, testing, and validation coordinated by the project owner.
+
+---
+
+## 原始說明（繁體中文）
 
 依賽事階段、小組與球隊篩選 FIFA 2026 賽程，產生可供行事曆訂閱的 ICS feed。
 
